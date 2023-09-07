@@ -9,14 +9,78 @@ const QRPortalWeb = require("@bot-whatsapp/portal");
 const BaileysProvider = require("@bot-whatsapp/provider/baileys");
 const MockAdapter = require("@bot-whatsapp/database/mock");
 
-// Mensaje que se Desprende de Mi cobertura(D) B
-const flowQuieroAfiliarme = addKeyword(["B", "b"])
+const flowEmpleadaDomestica = addKeyword(["D", "d"])
     .addAnswer([
-        "🪪 Para obtener tu credencial, podes escribir a la casilla 📧 ospida@ospida.org.ar",
-        "O comunicarte al número *(011) 43822051/43819521.*",
-        "Si querés contar con tu *credencial física*, te podes acercar a la oficina de Ospida, ubicada en 📍 San José 157, C1076AAC, CABA.",
+        "▫ DNI frente y dorso. ",
+        "▫ Debemos comprobar que estés inscrito en el monotributo. ",
+        "▫ Clave fiscal  ❕*(Solo se dará uso a la clave fiscal con fines de la afiliación, una vez cargada en el sistema se te notificará en el momento para que puedas cambiarla).*",
     ])
     .addAnswer("👉 *MENU* Volver al menú.");
+
+const flowMonotributoSocial = addKeyword(["C", "c"])
+    .addAnswer([
+        "▫ DNI frente y dorso. ",
+        "▫ Debemos comprobar que estés inscrito en el monotributo. ",
+        "▫ Clave fiscal  ❕*(Solo se dará uso a la clave fiscal con fines de la afiliación, una vez cargada en el sistema se te notificará en el momento para que puedas cambiarla).*",
+    ])
+    .addAnswer("👉 *MENU* Volver al menú.");
+
+const flowRelacionDeDependencia = addKeyword(["B", "b"])
+    .addAnswer([
+        "▫ Recibo quincenal o mensual.",
+        "▫ DNI frente y dorso. ",
+        "▫ Si tenés hijos, partida de nacimiento.",
+        "▫ Si estás casado/a, acta matrimonial o concubinato en caso de que tu pareja no trabaje en blanco y no cobre algún plan social.",
+        "▫ Partida de nacimiento de hijos/as.",
+        "▫ Clave fiscal  ❕*(Solo se dará uso a la clave fiscal con fines de la afiliación, una vez cargada en el sistema se te notificará en el momento para que puedas cambiarla).*",
+    ])
+    .addAnswer("👉 *MENU* Volver al menú.");
+
+const flowMonotributoDeCategoria = addKeyword(["A", "a"])
+    .addAnswer([
+        "▫ Formulario 152 y 184.",
+        "▫ DNI frente y dorso. ",
+        "▫ Debes tener si o si incluídos a tu grupo familiar como adherente. En caso de no tenerlo, te sugerimos que lo hagas o te ofrecemos hacerlo nosotros pidiéndote tu clave fiscal.",
+        "▫ Concubinato o acta matrimonial.",
+        "▫ Partida de nacimiento de hijos/as.",
+        "▫ Clave fiscal  ❕*(Solo se dará uso a la clave fiscal con fines de la afiliación, una vez cargada en el sistema se te notificará en el momento para que puedas cambiarla).*",
+    ])
+    .addAnswer("👉 *MENU* Volver al menú.");
+
+// Mensaje que se Desprende de Mi cobertura(D) B
+const flowComoMeAfilio = addKeyword(["A", "a"])
+    .addAnswer([
+        "🧑🏻‍💼 Para iniciar tu proceso de afiliación, te vamos a pedir cierta documentación, dependiendo de tu situación laboral. Por favor seleccioná entre las  siguientes opciones para obtener más información:",
+    ])
+    .addAnswer(
+        [
+            "👉 A *MONOTRIBUTO CON CATEGORÍA* ",
+            "👉 B *RELACIÓN DE DEPENDENCIA*",
+            "👉 C *MONOTRIBUTO SOCIAL*",
+            "👉 D *EMPLEADA DOMÉSTICA*",
+        ],
+        null,
+        null,
+        [
+            flowMonotributoDeCategoria,
+            flowRelacionDeDependencia,
+            flowMonotributoSocial,
+            flowEmpleadaDomestica,
+        ]
+    );
+
+const flowQuieroHacerUnaConsulta = addKeyword(["B", "b"])
+    .addAnswer(
+        "❔ ¿Tenés dudas sobre el proceso de afiliación? ¿Te interesa conocer más sobre los servicios que ofrecemos? *Podes enviarnos tu consulta* en nuestra página web, o haciendo click en este link https://www.asessaludsrl.com/Contactanos, y te responderemos a la brevedad. "
+    )
+    .addAnswer("👉 *MENU* Volver al menú.");
+
+const flowQuieroAfiliarme = addKeyword(["B", "b"]).addAnswer(
+    ["👉 A *¿Como me Afilio?* ", "👉 B *Quiero Hacer Una Consulta*"],
+    null,
+    null,
+    [flowComoMeAfilio, flowQuieroHacerUnaConsulta]
+);
 
 const flowFechaDeAlta = addKeyword(["B", "b"])
     .addAnswer(
@@ -28,17 +92,16 @@ const flowFechaDeAlta = addKeyword(["B", "b"])
         "▫️ *Régimen - Relación de dependencia:* Dos meses desde tu afiliación.",
         "❔Si tenés una consulta, podés contactarnos en nuestros *canales de atención.*",
     ])
-    .addAnswer([
-        "👉 *Atras* Volver al atras.",
-        "👉 *Cobertura* Volver a Cobertura.",
-    ]);
+    .addAnswer("👉 *MENU* Volver al menú.");
 
 // Mensaje que se Desprende de Soy Afilado(esta dentro de Mi Cobertura) A
-const flowMisCredenciales = addKeyword(["A", "a"]).addAnswer([
-    "🪪 Para obtener tu credencial, podes escribir a la casilla 📧 ospida@ospida.org.ar",
-    "O comunicarte al número *(011) 43822051/43819521.*",
-    "Si querés contar con tu *credencial física*, te podes acercar a la oficina de Ospida, ubicada en 📍 San José 157, C1076AAC, CABA.",
-]);
+const flowMisCredenciales = addKeyword(["A", "a"])
+    .addAnswer([
+        "🪪 Para obtener tu credencial, podes escribir a la casilla 📧 ospida@ospida.org.ar",
+        "O comunicarte al número *(011) 43822051/43819521.*",
+        "Si querés contar con tu *credencial física*, te podes acercar a la oficina de Ospida, ubicada en 📍 San José 157, C1076AAC, CABA.",
+    ])
+    .addAnswer("👉 *MENU* Volver al menú.");
 
 // Mensaje que se Desprende de Mi cobertura(D) A
 const flowSoyAfiliado = addKeyword(["A", "a", "atras", "Atras"]).addAnswer(
@@ -105,7 +168,7 @@ const flowPrincipal = addKeyword([
     "menu",
 ])
     .addAnswer(
-        "👋✨  Te comunicaste con el Whatsapp de *Asessalud* , ¿en qué podemos ayudarte hoy?"
+        "✨  Te comunicaste con el Whatsapp de *Asessalud* ,  _¿en qué podemos ayudarte hoy?_ "
     )
     .addAnswer(
         [
