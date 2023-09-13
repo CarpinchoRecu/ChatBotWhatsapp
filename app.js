@@ -178,23 +178,18 @@ const flowConocenos = addKeyword(["A", "a"], { sensitive: true })
     ])
     .addAnswer("👉 *MENU* Volver al menú.")
     .addAnswer("finalizar", { capture: true }, (ctx, { endFlow }) => {
-        if (ctx.body.includes("finalizar") ) {
-        return endFlow({body: "aqui finaliza chat"})
+        if (ctx.body.includes("finalizar")) {
+            return endFlow({ body: "aqui finaliza chat" });
         }
     });
 
 // Mensaje PRINCIPAL
-const flowPrincipal = addKeyword([
-    "hola",
-    "ola",
-    "hola",
-    "Menu",
-    "MENU",
-    "menu",
-    { sensitive: true },
-])
+const flowPrincipal = addKeyword(
+    ["Hola", "ola", "hola", "Menu", "MENU", "menu"],
+    { sensitive: true }
+)
     .addAnswer(
-        "✨  Te comunicaste con el Whatsapp de *Asessalud* ,  _¿en qué podemos ayudarte hoy?_ "
+        "✨ Te comunicaste con el Whatsapp de *Asessalud* , _¿en qué podemos ayudarte hoy?_ "
     )
     .addAnswer(
         [
@@ -203,12 +198,8 @@ const flowPrincipal = addKeyword([
             "👉 C *PMO*",
             "👉 D *Mi cobertura*",
         ],
-        { capture: true },
-        (ctx, { fallBack }) => {
-            if (!ctx.body.includes(["A", "a", "B", "b", "C", "c", "D", "d"])) {
-                return fallBack;
-            }
-        },
+        null,
+        null,
         [flowConocenos, flowContactanos, flowPmo, flowMiCobertura]
     );
 
