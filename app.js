@@ -9,7 +9,7 @@ const QRPortalWeb = require("@bot-whatsapp/portal");
 const BaileysProvider = require("@bot-whatsapp/provider/baileys");
 const MockAdapter = require("@bot-whatsapp/database/mock");
 
-const flowEmpleadaDomestica = addKeyword(["D", "d"])
+const flowEmpleadaDomestica = addKeyword(["D", "d"], { sensitive: true })
     .addAnswer([
         "▫ DNI frente y dorso. ",
         "▫ Debemos comprobar que estés inscrito en el monotributo. ",
@@ -17,7 +17,7 @@ const flowEmpleadaDomestica = addKeyword(["D", "d"])
     ])
     .addAnswer("👉 *MENU* Volver al menú.");
 
-const flowMonotributoSocial = addKeyword(["C", "c"])
+const flowMonotributoSocial = addKeyword(["C", "c"], { sensitive: true })
     .addAnswer([
         "▫ DNI frente y dorso. ",
         "▫ Debemos comprobar que estés inscrito en el monotributo. ",
@@ -25,7 +25,7 @@ const flowMonotributoSocial = addKeyword(["C", "c"])
     ])
     .addAnswer("👉 *MENU* Volver al menú.");
 
-const flowRelacionDeDependencia = addKeyword(["B", "b"])
+const flowRelacionDeDependencia = addKeyword(["B", "b"], { sensitive: true })
     .addAnswer([
         "▫ Recibo quincenal o mensual.",
         "▫ DNI frente y dorso. ",
@@ -36,7 +36,7 @@ const flowRelacionDeDependencia = addKeyword(["B", "b"])
     ])
     .addAnswer("👉 *MENU* Volver al menú.");
 
-const flowMonotributoDeCategoria = addKeyword(["A", "a"])
+const flowMonotributoDeCategoria = addKeyword(["A", "a"], { sensitive: true })
     .addAnswer([
         "▫ Formulario 152 y 184.",
         "▫ DNI frente y dorso. ",
@@ -48,7 +48,7 @@ const flowMonotributoDeCategoria = addKeyword(["A", "a"])
     .addAnswer("👉 *MENU* Volver al menú.");
 
 // Mensaje que se Desprende de Mi cobertura(D) B
-const flowComoMeAfilio = addKeyword(["A", "a"])
+const flowComoMeAfilio = addKeyword(["A", "a"], { sensitive: true })
     .addAnswer([
         "🧑🏻‍💼 Para iniciar tu proceso de afiliación, te vamos a pedir cierta documentación, dependiendo de tu situación laboral. Por favor seleccioná entre las  siguientes opciones para obtener más información:",
     ])
@@ -60,7 +60,11 @@ const flowComoMeAfilio = addKeyword(["A", "a"])
             "👉 D *EMPLEADA DOMÉSTICA*",
         ],
         null,
-        null,
+        (ctx, { fallBack }) => {
+            if (!ctx.body.includes(["A", "a", "B", "b", "C", "c", "D", "d"])) {
+                return fallBack;
+            }
+        },
         [
             flowMonotributoDeCategoria,
             flowRelacionDeDependencia,
@@ -69,20 +73,26 @@ const flowComoMeAfilio = addKeyword(["A", "a"])
         ]
     );
 
-const flowQuieroHacerUnaConsulta = addKeyword(["B", "b"])
+const flowQuieroHacerUnaConsulta = addKeyword(["B", "b"], { sensitive: true })
     .addAnswer(
         "❔ ¿Tenés dudas sobre el proceso de afiliación? ¿Te interesa conocer más sobre los servicios que ofrecemos? *Podes enviarnos tu consulta* en nuestra página web, o haciendo click en este link https://www.asessaludsrl.com/Contactanos, y te responderemos a la brevedad. "
     )
     .addAnswer("👉 *MENU* Volver al menú.");
 
-const flowQuieroAfiliarme = addKeyword(["B", "b"]).addAnswer(
+const flowQuieroAfiliarme = addKeyword(["B", "b"], {
+    sensitive: true,
+}).addAnswer(
     ["👉 A *¿Como me Afilio?* ", "👉 B *Quiero Hacer Una Consulta*"],
     null,
-    null,
+    (ctx, { fallBack }) => {
+        if (!ctx.body.includes(["A", "a", "B", "b"])) {
+            return fallBack;
+        }
+    },
     [flowComoMeAfilio, flowQuieroHacerUnaConsulta]
 );
 
-const flowFechaDeAlta = addKeyword(["B", "b"])
+const flowFechaDeAlta = addKeyword(["B", "b"], { sensitive: true })
     .addAnswer(
         "📆 Tomando tu *fecha de afiliación*, podes calcular un aproximado de tu *fecha de alta* con la siguiente tabla:"
     )
@@ -95,7 +105,7 @@ const flowFechaDeAlta = addKeyword(["B", "b"])
     .addAnswer("👉 *MENU* Volver al menú.");
 
 // Mensaje que se Desprende de Soy Afilado(esta dentro de Mi Cobertura) A
-const flowMisCredenciales = addKeyword(["A", "a"])
+const flowMisCredenciales = addKeyword(["A", "a"], { sensitive: true })
     .addAnswer([
         "🪪 Para obtener tu credencial, podes escribir a la casilla 📧 ospida@ospida.org.ar",
         "O comunicarte al número *(011) 43822051/43819521.*",
@@ -104,23 +114,33 @@ const flowMisCredenciales = addKeyword(["A", "a"])
     .addAnswer("👉 *MENU* Volver al menú.");
 
 // Mensaje que se Desprende de Mi cobertura(D) A
-const flowSoyAfiliado = addKeyword(["A", "a", "atras", "Atras"]).addAnswer(
+const flowSoyAfiliado = addKeyword(["A", "a"], {
+    sensitive: true,
+}).addAnswer(
     ["👉 A *Mis Credenciales*", "👉 B *Fecha de alta*"],
     null,
-    null,
+    (ctx, { fallBack }) => {
+        if (!ctx.body.includes(["A", "a", "B", "b"])) {
+            return fallBack;
+        }
+    },
     [flowMisCredenciales, flowFechaDeAlta]
 );
 
 //Mensaje que se desprende del PRINCIPAL D
-const flowMiCobertura = addKeyword(["D", "d"]).addAnswer(
+const flowMiCobertura = addKeyword(["D", "d"], { sensitive: true }).addAnswer(
     ["👉 A *Soy Afiliado*", "👉 B *Quiero Afiliarme*"],
-    null,
-    null,
+    { capture: true },
+    (ctx, { fallBackCobertura }) => {
+        if (!ctx.body.includes(["A", "a", "B", "b"])) {
+            return fallBackCobertura;
+        }
+    },
     [flowSoyAfiliado, flowQuieroAfiliarme]
 );
 
 //Mensaje que se desprende del PRINCIPAL C
-const flowPmo = addKeyword(["C", "c"])
+const flowPmo = addKeyword(["C", "c"], { sensitive: true })
     .addAnswer(
         "✅ El *Programa Médico Obligatorio (PMO)* establece las _prestaciones básicas esenciales_ que deben garantizar las Obras Sociales."
     )
@@ -134,7 +154,7 @@ const flowPmo = addKeyword(["C", "c"])
     .addAnswer("👉 *MENU* Volver al menú.");
 
 //Mensaje que se desprende del PRINCIPAL B
-const flowContactanos = addKeyword(["B", "b"])
+const flowContactanos = addKeyword(["B", "b"], { sensitive: true })
     .addAnswer([
         "📍 *Sede Buenos Aires:* Rivadavia 1367, San Nicolás C1033AAD, Lun. a Vie. de 9:00hs a 16:00hs.",
         "🙌🏼 _Estamos a tu disposición_ . Podes ponerte en contacto con nosotros por los siguientes *canales de atención:* ",
@@ -145,7 +165,7 @@ const flowContactanos = addKeyword(["B", "b"])
     .addAnswer("👉 *MENU* Volver al menú.");
 
 //Mensaje que se desprende del PRINCIPAL A
-const flowConocenos = addKeyword(["A", "a"])
+const flowConocenos = addKeyword(["A", "a"], { sensitive: true })
     .addAnswer(
         "✅ Somos *Asessalud*, una empresa que hace 16 años está en este rubro. Junto con un gran equipo de profesionales _comercializamos y brindamos asesoría_ para que puedas elegir _el mejor plan de salud_ tanto para vos como para tu grupo familiar."
     )
@@ -156,7 +176,12 @@ const flowConocenos = addKeyword(["A", "a"])
         "▫️ *Facebook*   https://www.fb.com/profile.php?id=100094507124115",
         "▫️ *Página Web*  https://www.asessaludsrl.com/",
     ])
-    .addAnswer("👉 *MENU* Volver al menú.");
+    .addAnswer("👉 *MENU* Volver al menú.")
+    .addAnswer("finalizar", { capture: true }, (ctx, { endFlow }) => {
+        if (ctx.body.includes("finalizar") ) {
+        return endFlow({body: "aqui finaliza chat"})
+        }
+    });
 
 // Mensaje PRINCIPAL
 const flowPrincipal = addKeyword([
@@ -166,6 +191,7 @@ const flowPrincipal = addKeyword([
     "Menu",
     "MENU",
     "menu",
+    { sensitive: true },
 ])
     .addAnswer(
         "✨  Te comunicaste con el Whatsapp de *Asessalud* ,  _¿en qué podemos ayudarte hoy?_ "
@@ -177,8 +203,12 @@ const flowPrincipal = addKeyword([
             "👉 C *PMO*",
             "👉 D *Mi cobertura*",
         ],
-        null,
-        null,
+        { capture: true },
+        (ctx, { fallBack }) => {
+            if (!ctx.body.includes(["A", "a", "B", "b", "C", "c", "D", "d"])) {
+                return fallBack;
+            }
+        },
         [flowConocenos, flowContactanos, flowPmo, flowMiCobertura]
     );
 
