@@ -97,7 +97,6 @@ const flowFechaDeAlta = addKeyword(["B", "b"], { sensitive: true })
         "📆 Tomando tu *fecha de afiliación*, podes calcular un aproximado de tu *fecha de alta* con la siguiente tabla:"
     )
     .addAnswer([
-        "▫️ *Alta temprana:* Cinco meses desde tu afiliación.",
         "▫️ *Monotributo con categoría - Empleada doméstica - Monotributo social:* Tres meses desde tu afiliación.",
         "▫️ *Régimen - Relación de dependencia:* Dos meses desde tu afiliación.",
         "❔Si tenés una consulta, podés contactarnos en nuestros *canales de atención.*",
@@ -177,8 +176,8 @@ const flowConocenos = addKeyword(["A", "a"], { sensitive: true })
         "▫️ *Página Web*  https://www.asessaludsrl.com/",
     ])
     .addAnswer("👉 *MENU* Volver al menú.")
-    .addAnswer("finalizar", { capture: true }, (ctx, { endFlow }) => {
-        if (ctx.body.includes("finalizar")) {
+    .addAnswer("Finalizar", { capture: true }, (ctx, { endFlow }) => {
+        if (ctx.body.includes([""])) {
             return endFlow({ body: "aqui finaliza chat" });
         }
     });
@@ -193,15 +192,24 @@ const flowPrincipal = addKeyword(
     )
     .addAnswer(
         [
-            "👉 A *Conocenos*",
-            "👉 B *Contactanos*",
-            "👉 C *PMO*",
-            "👉 D *Mi cobertura*",
+            "✅ *A* - _Conócenos_",
+            "✅ *B* - _Contactanos_",
+            "✅ *C* - _PMO_",
+            "✅ *D* - _Mi cobertura_",
         ],
-        null,
-        null,
+        {buttons: [{ body: 'Boton 1' }, { body: 'Boton 2' }, { body: 'Boton 3' }]},
+        (ctx, {fallBack}) => {
+            if (!ctx.body.includes(["A","a","B","b","C","c","D","d"])) {
+                return fallBack()
+            }
+        },
         [flowConocenos, flowContactanos, flowPmo, flowMiCobertura]
     );
+
+
+    const flowString = addKeyword('hola').addAnswer('Este mensaje envia tres botones', {
+        buttons: [{ body: 'Boton 1' }, { body: 'Boton 2' }, { body: 'Boton 3' }],
+    })
 
 const main = async () => {
     const adapterDB = new MockAdapter();
