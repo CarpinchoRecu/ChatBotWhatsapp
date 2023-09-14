@@ -12,10 +12,11 @@
         "@bot-whatsapp/bot": "latest",
         "@bot-whatsapp/cli": "latest",
         "@bot-whatsapp/database": "latest",
-        "@bot-whatsapp/provider": "latest",
         "@bot-whatsapp/portal": "latest",
+        "@bot-whatsapp/provider": "latest",
         "@whiskeysockets/baileys": "^6.4.0",
-        "wa-sticker-formatter": "4.3.2"
+        "wa-sticker-formatter": "4.3.2",
+        "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#fix-buttons-list"
     },
     "author": "",
     "license": "ISC"
